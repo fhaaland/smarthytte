@@ -15,12 +15,39 @@ const LOCATION = { // Lølandsheia, Lyngdal (Vest-Agder)
 };
 
 exports.getWeather = functions.https.onRequest((request, response) => {
+
     yrno.getWeather(LOCATION)
         .then((weather) => {
             return weather.getFiveDaySummary();
         })
-        .then((summay) => {
-            response.send(summay);
+        .then((summary) => {
+            response.send(summary.map(x => {
+                return {
+                    from: x.from,
+                    to: x.to,
+                    minRain: x.rainDetails.minRain,
+                    maxRain: x.rainDetails.maxRain,
+                    rain: x.rainDetails.rain,
+                    temperature: x.temperature.value,
+                    windDirectionDeg: x.windDirection.deg,
+                    windDirectionName: x.windDirection.name,
+                    windSpeedMps: x.windSpeed.mps,
+                    windSpeedBeaufort: x.windSpeed.beaufort,
+                    windGustMps: (x.windGust || {}).mps,
+                    humidity: x.humidity.value,
+                    pressure: x.pressure.value,
+                    cloudinessId: x.cloudiness.id,
+                    cloudiness: x.cloudiness.percent,
+                    fog: (x.fog || {}).percent,
+                    lowClouds: x.lowClouds.percent,
+                    lowCloudsId: x.lowClouds.id,
+                    mediumCloudsId: x.mediumClouds.id,
+                    mediumClouds: x.mediumClouds.percent,
+                    highCloudsId: x.highClouds.id,
+                    highClouds: x.highClouds.percent,
+                    dewpointTemperature: x.dewpointTemperature.value
+                };
+            }));
             return true;
         })
         .catch((e) => {
@@ -35,8 +62,7 @@ exports.addPower = functions.https.onRequest(async (request, response) => {
 
     const snapshot = await admin.database().ref('/power').push({
         voltage: 12.224,
-        current: 147.622,
-        power: 1805.639
+        current: 0.135
     });
 
     response.status(200).send(true);
