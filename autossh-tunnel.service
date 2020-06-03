@@ -1,0 +1,24 @@
+#################################################################
+#
+# FILE SHOULD BE PLACED IN /etc/systemd/system/
+#
+# THEN, ENABLE THE SERVICE WITH:
+#
+# remote.host$ systemctl daemon-reload
+# remote.host$ systemctl start autossh-tunnel.service
+# remote.host$ systemctl enable autossh-tunnel.service#
+# 
+#################################################################
+# ORIGIN: https://handyman.dulare.com/ssh-tunneling-with-autossh/
+#################################################################
+
+[Unit]
+Description=AutoSSH tunnel service Remote port 6000 to local 22
+After=network.target
+
+[Service]
+Environment="AUTOSSH_GATETIME=0"
+ExecStart=/usr/bin/autossh -o "ServerAliveInterval 10" -o "ServerAliveCountMax 3" -N -R 6000:localhost:22 -i ~/.ssh/pi pi@smarthytte.duckdns.org
+
+[Install]
+WantedBy=multi-user.target
