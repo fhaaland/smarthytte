@@ -1,0 +1,1 @@
+python run.py | curl -H "Content-Type: application/json" -X POST -d "$(</dev/stdin)" https://us-central1-solarpower-extravaganza.cloudfunctions.net/addPower
