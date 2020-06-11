@@ -81,11 +81,16 @@ exports.addPower = functions.https.onRequest(async (request, response) => {
     else if (!body.current) {
         response.status(402).send('Current is not set');
     } else {
-        await admin.database().ref('/power').push({
+        admin.firestore().collection('power').add({
             voltage: body.voltage,
             current: body.current,
             registered: new Date().getTime()
+        }).then((success) => {
+            response.sendStatus(200);
+            return true;
+        }).catch((error) => {
+            response.sendStatus(500);
+            return false;
         });
-        response.status(200);
     }
 });
