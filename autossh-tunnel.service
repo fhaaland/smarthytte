@@ -18,6 +18,7 @@ After=network.target
 
 [Service]
 Environment="AUTOSSH_GATETIME=0"
+ExecStartPre=/bin/sleep 60
 ExecStart=/usr/bin/autossh -o "ServerAliveInterval 10" -o "ServerAliveCountMax 3" -N -R 6000:localhost:22 -i ~/.ssh/pi pi@smarthytte.duckdns.org
 
 [Install]
